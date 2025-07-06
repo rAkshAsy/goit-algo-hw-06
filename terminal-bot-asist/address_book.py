@@ -14,12 +14,9 @@ class Name(Field):
         self.value = self.value.casefold()
 
 class Phone(Field):
-    def __new__(cls, value: str):
-        if len(value) < 10:
-            return None
-        return super().__new__(cls)
-    
     def __init__(self, value: str):
+        if len(value) < 10 or not value.isdigit():
+            raise ValueError('Invalid phone number.')
         super().__init__(value)
         
 
@@ -29,9 +26,12 @@ class Record:
         self.phones = []
 
     def add_phone(self, phone: str) -> None:
-        obj_phone = Phone(phone)
-        if obj_phone:
-            self.phones.append(obj_phone)
+        try:
+            obj_phone = Phone(phone)
+            if obj_phone:
+                self.phones.append(obj_phone)
+        except ValueError:
+            pass
     
     def remove_phone(self, phone: str) -> None:
         removed_phone = self.find_phone(phone)
@@ -48,9 +48,9 @@ class Record:
             return None
         
     def edit_phone(self, old_phone, new_phone) -> None:
-        if self.find_phone(old_phone) and len(new_phone) > 9:
-            self.remove_phone(old_phone)
+        if self.find_phone(old_phone):
             self.add_phone(new_phone)
+            self.remove_phone(old_phone)
         else:
             raise ValueError('Incorect arguments for self.edit_phone() method.')
 
@@ -124,17 +124,17 @@ if __name__ == "__main__":
 
 # Change phone number
 
-    rob_rec.edit_phone('1234567890000', 'zzzzzzzzzz') # Corectly work
+    rob_rec.edit_phone('1234567890000', '0951002030') # Corectly work
     print(rob_rec)
 
 # Exception catching
 
     try:
         rob_rec.edit_phone('INCORRECT PHONE', '+380959585444')
-    except ValueError:
-        print('First ValueError: old phone does not exist')
+    except ValueError as e:
+        print(e)
 
     try:
-        rob_rec.edit_phone('zzzzzzzzzz', '00')
-    except ValueError:
-        print('Second ValueError: new phone is too short')
+        rob_rec.edit_phone('0951002030', '00')
+    except ValueError as e:
+        print(e)
