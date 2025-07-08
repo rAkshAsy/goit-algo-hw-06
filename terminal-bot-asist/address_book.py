@@ -15,7 +15,7 @@ class Name(Field):
 
 class Phone(Field):
     def __init__(self, value: str):
-        if len(value) < 10 or not value.isdigit():
+        if not (9 < len(value) < 12) or not value.isdigit():
             raise ValueError('Invalid phone number.')
         super().__init__(value)
         
@@ -26,12 +26,9 @@ class Record:
         self.phones = []
 
     def add_phone(self, phone: str) -> None:
-        try:
-            obj_phone = Phone(phone)
-            if obj_phone:
-                self.phones.append(obj_phone)
-        except ValueError:
-            pass
+        obj_phone = Phone(phone)
+        if obj_phone:
+            self.phones.append(obj_phone)
     
     def remove_phone(self, phone: str) -> None:
         removed_phone = self.find_phone(phone)
@@ -98,16 +95,17 @@ if __name__ == "__main__":
 # Create first Record object
 
     rob_rec = Record('roBert')
-    rob_rec.add_phone('123456789')
-    rob_rec.add_phone('111')
-    rob_rec.add_phone('1234567890000')
-    rob_rec.add_phone('Is that a phone? =)')
+    # rob_rec.add_phone('955546000')
+    rob_rec.add_phone('0955546000')
 
 # Create second Record object
 
     name_rec = Record('NaMe 1')
     name_rec.add_phone('0887009090')
-    name_rec.add_phone('0887003030')
+    name_rec.add_phone('+380939585547')
+    name_rec.add_phone('80939585547')
+
+    name_rec.edit_phone('80939585547', '0887003030')
 
     name_rec.remove_phone('0887003030') # Remove phone numder
     name_rec.remove_phone('0887003000') # Return None and do nothing
